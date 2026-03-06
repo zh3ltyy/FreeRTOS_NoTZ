@@ -37,6 +37,14 @@
 #define LED_GREEN_pin                           LED1_PIN
 #define LED_GREEN_port                          LED1_GPIO_PORT
 
+/*Mapped pin of red led*/
+#define LED_BLUE_pin                             LED2_PIN
+#define LED_BLUE_port                            LED2_GPIO_PORT
+
+/*Mapped pin of blue led*/
+#define LED_RED_pin                            LED3_PIN
+#define LED_RED_port                           LED3_GPIO_PORT
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -46,6 +54,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+
+extern RNG_HandleTypeDef hrng;
+uint32_t random_delay_led;
 
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
@@ -68,7 +79,7 @@ const osThreadAttr_t defaultTask_attributes = {
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-
+  random_delay_led = 0;
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -88,7 +99,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-
+  
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -109,10 +120,40 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN defaultTask */
   /* Infinite loop */
+
+
   while(1){
-    HAL_GPIO_TogglePin(LED_GREEN_port, LED_GREEN_pin);
-    osDelay(0.5F);
+    if (HAL_RNG_GenerateRandomNumber(&hrng, &random_delay_led) == HAL_OK){
+      random_delay_led %= 400;
+      random_delay_led += 100;
+      HAL_GPIO_WritePin(LED_GREEN_port, LED_GREEN_pin, GPIO_PIN_SET);
+      osDelay(random_delay_led);
+      HAL_GPIO_WritePin(LED_GREEN_port, LED_GREEN_pin, GPIO_PIN_RESET);
+    }
+    else
+    	osDelay(10);
+    if (HAL_RNG_GenerateRandomNumber(&hrng, &random_delay_led) == HAL_OK){
+      random_delay_led %= 400;
+      random_delay_led += 100;
+      HAL_GPIO_WritePin(LED_BLUE_port, LED_BLUE_pin, GPIO_PIN_SET);
+      osDelay(random_delay_led);
+      HAL_GPIO_WritePin(LED_BLUE_port, LED_BLUE_pin, GPIO_PIN_RESET);
+    }
+    else
+    	osDelay(10);
+
+    if (HAL_RNG_GenerateRandomNumber(&hrng, &random_delay_led) == HAL_OK){
+      random_delay_led %= 400;
+      random_delay_led += 100;
+      HAL_GPIO_WritePin(LED_RED_port, LED_RED_pin, GPIO_PIN_SET);
+      osDelay(random_delay_led);
+      HAL_GPIO_WritePin(LED_RED_port, LED_RED_pin, GPIO_PIN_RESET);
+    }
+    else
+    	osDelay(10);
+    
   }
+
   /* USER CODE END defaultTask */
 }
 
