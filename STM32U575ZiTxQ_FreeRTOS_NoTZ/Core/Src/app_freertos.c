@@ -33,6 +33,10 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+/*Mapped pin of green led*/
+#define LED_GREEN_pin                           LED1_PIN
+#define LED_GREEN_port                          LED1_GPIO_PORT
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -105,9 +109,9 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN defaultTask */
   /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
+  while(1){
+    HAL_GPIO_TogglePin(LED_GREEN_port, LED_GREEN_pin);
+    osDelay(0.5F);
   }
   /* USER CODE END defaultTask */
 }
